@@ -37,7 +37,7 @@ type RuntimeProvider = {
 export type ProviderIpcDependencies = {
   registrar: IpcRegistrar;
   getHost: () => HostProcess | null;
-  modelsDevCatalog: Pick<ModelsDevCatalog, "refresh" | "ensureLoaded" | "loadLocal" | "getStatus" | "findModel" | "modelsForProvider">;
+  modelsDevCatalog: Pick<ModelsDevCatalog, "refresh" | "ensureLoaded" | "loadLocal" | "getStatus" | "findModel" | "providerKeyForRow" | "modelsForProvider">;
   vendorOAuth: VendorOAuth;
   logger: Pick<Logger, "app">;
   enrichProvider: (provider: RuntimeProvider, selectedModelId?: string) => any;

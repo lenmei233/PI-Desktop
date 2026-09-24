@@ -7067,3 +7067,23 @@ must keep splitting are covered by `markdown-blocks.test.mjs`.
   `--composer-dock-height`. There is no scroll state, protocol, persistence,
   theme schema, or permission change. See `04-ux/08-component-spec.md` and
   E2E-CHAT-opaque-floating-decision-and-retry-surfaces.
+
+## 2026-09-25 — Bundled monochrome provider marks in the model picker (D625, issue #1028)
+
+- Amend `11-provider-model-system.md` and
+  `13-model-catalog-and-selection.md` §9.2.1 (ADR `provider-brand-marks`).
+  `ProviderPublic` gains an optional `catalogProviderKey`, filled once in
+  Electron main by the existing `modelsDevCatalog.providerKeyForRow` during
+  provider enrichment. The renderer selects a mark by that key and never
+  re-derives the alias mapping, so there is no second source of truth and a
+  renamed row cannot borrow another vendor's artwork.
+- The Composer model row reads: provider mark, wire model ID, reasoning/vision
+  badges, and the `context window · output limit` pair. Only the window was
+  shown before; the output limit is now visible beside it through the same
+  shared compact formatter, with an em dash for any limit the service never
+  published.
+- Marks are vendored under `apps/desktop/src/assets/models/` and rendered
+  through a CSS mask, so they stay monochrome, follow the theme text color, and
+  need no runtime network access or CSP change. A key with no vendored mark,
+  including every row the catalog cannot place, falls back to the shared generic
+  mark.

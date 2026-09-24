@@ -4997,3 +4997,18 @@ Markdown 源码，不是 `text/html` 负载；对禁用行内 HTML 的外部编�
   断言遮罩跟随 `--composer-dock-height`。滚动状态、协议、持久化、主题
   schema、权限都没有变化。见 `04-ux/08-component-spec.md` 与
   E2E-CHAT-opaque-floating-decision-and-retry-surfaces。
+
+## 2026-09-25 — 模型选择器使用打包的单色提供商图标（D625，issue #1028）
+
+- 修订 `11-provider-model-system.md` 与
+  `13-model-catalog-and-selection.md` §9.2.1（ADR `provider-brand-marks`）。
+  `ProviderPublic` 新增可选的 `catalogProviderKey`，由主进程在提供商富化时经
+  已有的 `modelsDevCatalog.providerKeyForRow` 一次性填充。渲染层按该 key 选择
+  图标，绝不重新推导别名映射，因此不存在第二事实来源，被改名的行也不会借用
+  其他厂商的美术资源。
+- Composer 模型行从左至右为：提供商图标、线模型 ID、推理/视觉标记，以及
+  「上下文窗口 · 输出上限」一对数值。此前只显示上下文窗口；现在输出上限以同一
+  个共享紧凑格式化函数显示在其后，服务未发布的上限显示为破折号。
+- 图标打包在 `apps/desktop/src/assets/models/` 下，并通过 CSS mask 渲染，因此
+  保持单色、跟随主题文字颜色，且无需任何运行时网络访问或 CSP 变更。没有
+  bundled 图标的 key（包括目录无法定位的所有行）统一回退到共享通用图标。

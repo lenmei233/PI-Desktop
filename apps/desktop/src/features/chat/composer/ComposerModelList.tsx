@@ -3,6 +3,7 @@ import type { TFunction } from "i18next";
 import type { RefObject } from "react";
 import { IconCheck, IconSearch } from "../../../components/icons";
 import { composerModelBadges, composerModelDisplayName, composerModelOutputLimit, sameComposerModelId } from "../../../lib/composer-models";
+import { ModelProviderIcon } from "./ModelProviderIcon";
 
 export type ComposerModelGroup = {
   provider: ProviderPublic;
@@ -54,7 +55,10 @@ export function ComposerModelList({
                       role="group"
                       aria-label={group.providerDisplayName}
                     >
-                      <div className="composer-model-group-label">{group.providerDisplayName}</div>
+                      <div className="composer-model-group-label">
+                        <ModelProviderIcon catalogProviderKey={group.provider.catalogProviderKey} />
+                        {group.providerDisplayName}
+                      </div>
                       {group.models.map((model) => {
                         const index = flatIndex++;
                         const active =
@@ -79,6 +83,7 @@ export function ComposerModelList({
                             onMouseMove={() => setModelHighlight(index)}
                             onClick={() => void selectModel(group.provider, model.modelId)}
                           >
+                            <ModelProviderIcon catalogProviderKey={group.provider.catalogProviderKey} />
                             <span className="composer-model-option-main">
                               <span className="composer-model-full-id">{optionTitle}</span>
                               {optionDisplayName !== optionTitle ? (

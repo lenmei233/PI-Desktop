@@ -30,6 +30,14 @@ const catalogSource = await readFile(
 );
 const mainSource = await readMainSource();
 const providerCatalogSource = await readMainModule("runtime/provider-catalog.ts");
+const iconSource = await readFile(
+  new URL("../src/features/chat/composer/ModelProviderIcon.tsx", import.meta.url),
+  "utf8",
+);
+const providersTypeSource = await readFile(
+  new URL("../../../packages/shared/src/types/providers.ts", import.meta.url),
+  "utf8",
+);
 const sidecarSource = await readFile(
   new URL("../../../packages/agent-runtime/src/sidecar.ts", import.meta.url),
   "utf8",
@@ -113,6 +121,43 @@ test("the Composer model rows pair the context window with the output limit", ()
   assert.match(composerSource, /formatTokenCount\(outputLimit\)/);
   assert.match(styles, /\.composer-model-option-limits \{/);
   assert.match(styles, /\.composer-model-option-max \{/);
+});
+
+test("a provider row carries the catalog key its brand mark comes from", () => {
+  // The key is resolved once, in Main, through the same alias mapping that
+  // already places the row's metadata — so two providers a user renamed to the
+  // same display name keep their own marks, and a custom row the catalog
+  // cannot place leaves the field absent rather than inventing an identity.
+  assert.match(
+    providerCatalogSource,
+    /const catalogProviderKey = modelsDevCatalog\.providerKeyForRow\(\{[\s\S]*?\}\)/,
+  );
+  assert.match(
+    providerCatalogSource,
+    /\.\.\.\(catalogProviderKey \? \{ catalogProviderKey \} : \{\}\)/,
+  );
+  // The field is optional on the public provider type, so an old producer that
+  // never sends it still type-checks and the UI falls back.
+  assert.match(providersTypeSource, /catalogProviderKey\?: string;/);
+});
+
+test("each composer model row and group heading carries a provider mark", () => {
+  assert.match(composerSource, /<ModelProviderIcon catalogProviderKey=\{group\.provider\.catalogProviderKey\} \/>/);
+  // The artwork is a bundled URL, so the element is masked with it rather than
+  // painted: the upstream marks are `currentColor` paths, and a mask keeps
+  // every vendor at one visual weight in both themes.
+  assert.match(iconSource, /maskImage: `url\(\$\{mark\}\)`/);
+  // Twice: once on the group heading, once per row. The heading names the
+  // vendor and the rows repeat it, so a long list stays readable after the
+  // heading has scrolled away.
+  assert.equal((composerSource.match(/<ModelProviderIcon /g) ?? []).length, 2);
+  assert.match(composerSource, /composer-model-group-label[\s\S]{0,200}?<ModelProviderIcon /);
+  // Marks are monochrome through a mask, so a run of vendors reads as one
+  // visual weight and inherits the theme's text color instead of a set of
+  // saturated logos.
+  assert.match(styles, /\.provider-mark-brand \{/);
+  assert.match(styles, /mask-size: contain;/);
+  assert.match(styles, /\.provider-mark-generic \{/);
 });
 
 test("capability overrides reach the transport modality arrays", () => {

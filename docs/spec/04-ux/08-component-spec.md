@@ -2986,6 +2986,13 @@ reasoning-level control.
   Model-row reasoning badges use published reasoning metadata; vision badges
   use the effective image-input capability for the row's provider binding
   (`supportsImages` when explicitly set, published image input otherwise).
+  Each row and its sticky provider heading carry the provider mark, chosen by
+  the row's `catalogProviderKey` and falling back to the shared generic mark
+  when the catalog places no vendored artwork for it (ADR
+  `provider-brand-marks`). The marks are decorative, monochrome through a CSS
+  mask, and never fetched at runtime. After the badges, each row shows its
+  published `context window · output limit` pair through the shared compact
+  token formatter; an unpublished value renders as an em dash.
   Rows use `role="menuitemradio"`, `aria-checked`, active-row styling, and a
   trailing check. Selecting a concrete model, or a level from the radio list,
   persists the complete session config, clears model filtering, and returns
