@@ -65,6 +65,13 @@ entitled to it.
   a limit the service never published reads as an em dash. The settings rows,
   the Composer picker, the context inspector and the transcript all call this
   one implementation, while usage counters keep a real `0` instead of the dash.
+- A Composer model row carries both limits of the pair — the context window and
+  then the output limit, separated by a middot — so the picker reads the same way
+  as the settings row and one number tells the user the model's shape. The
+  published record decides both values; a row states neither when the service
+  published neither, and an em dash replaces any limit it did not publish. A
+  per-model override entered in Advanced stays a settings/runtime value, exactly
+  like the context window: the picker reports what the model publishes.
 - When an explicit binding enables `xhigh` or `max` without a catalog wire
   mapping, the runtime sends that canonical value through to the adapter rather
   than letting the adapter clamp it to `high`. Existing non-null catalog

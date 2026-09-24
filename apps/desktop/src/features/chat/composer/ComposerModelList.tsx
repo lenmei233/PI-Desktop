@@ -2,7 +2,7 @@ import { formatTokenCount, type ModelInfo, type ProviderPublic } from "@pi-deskt
 import type { TFunction } from "i18next";
 import type { RefObject } from "react";
 import { IconCheck, IconSearch } from "../../../components/icons";
-import { composerModelBadges, composerModelDisplayName, sameComposerModelId } from "../../../lib/composer-models";
+import { composerModelBadges, composerModelDisplayName, composerModelOutputLimit, sameComposerModelId } from "../../../lib/composer-models";
 
 export type ComposerModelGroup = {
   provider: ProviderPublic;
@@ -66,6 +66,7 @@ export function ComposerModelList({
                           model.modelId,
                           model.displayName,
                         );
+                        const outputLimit = composerModelOutputLimit(model);
                         return (
                           <button
                             key={`${group.provider.id}:${model.modelId}`}
@@ -93,9 +94,15 @@ export function ComposerModelList({
                                     {t(badge === "reasoning" ? "chat.modelBadgeReasoning" : "chat.modelBadgeVision")}
                                   </span>
                                 ))}
-                                {model.contextWindow ? (
-                                  <span className="composer-model-option-ctx">
-                                    {formatTokenCount(model.contextWindow)}
+                                {model.contextWindow || outputLimit ? (
+                                  <span className="composer-model-option-limits">
+                                    <span className="composer-model-option-ctx">
+                                      {formatTokenCount(model.contextWindow)}
+                                    </span>
+                                    <span className="composer-model-option-sep" aria-hidden="true">·</span>
+                                    <span className="composer-model-option-max">
+                                      {formatTokenCount(outputLimit)}
+                                    </span>
                                   </span>
                                 ) : null}
                               </span>

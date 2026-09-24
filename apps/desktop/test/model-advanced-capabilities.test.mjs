@@ -100,6 +100,21 @@ test("the Composer model rows use the provider binding for vision badges", () =>
   assert.match(composerSource, /composerModelBadges\(model, group\.provider\)/);
 });
 
+test("the Composer model rows pair the context window with the output limit", () => {
+  // The picker row reads like the settings row — context window, then output
+  // limit — so a model's shape is the same number in both places.
+  assert.match(composerSource, /composerModelOutputLimit\(model\)/);
+  assert.match(
+    composerSource,
+    /composer-model-option-ctx[\s\S]*?composer-model-option-sep[\s\S]*?composer-model-option-max/,
+  );
+  // Both values go through the one shared compact formatter, so an unpublished
+  // limit reads as an em dash instead of an invented number.
+  assert.match(composerSource, /formatTokenCount\(outputLimit\)/);
+  assert.match(styles, /\.composer-model-option-limits \{/);
+  assert.match(styles, /\.composer-model-option-max \{/);
+});
+
 test("capability overrides reach the transport modality arrays", () => {
   assert.match(capabilitiesSource, /function modalityOverride\(/);
   assert.match(capabilitiesSource, /nextInput\.add\("image"\)/);
