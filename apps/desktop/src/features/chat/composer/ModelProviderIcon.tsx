@@ -1,26 +1,20 @@
 import { IconBot } from "../../../components/icons";
-import { providerMarkUrl } from "../../../lib/provider-marks";
+import { providerMark } from "../../../lib/provider-marks";
 
 /**
  * One provider identity mark for the Composer model list.
  *
- * A known catalog key renders its bundled brand mark through a CSS mask, so
- * every row carries a single visual weight and inherits the surrounding text
- * color in either theme — the marks upstream publish are monochrome
- * `currentColor` artwork, and a mask keeps them that way instead of dropping a
- * run of saturated logos into one list. Anything else, including a row the
- * catalog could not place, falls back to the shared generic mark, so a
- * provider without a vendored mark is still recognizable and never an
- * unlabeled row.
+ * A known vendor renders its bundled mark: monochrome `currentColor` paths, so
+ * the artwork follows the theme's text color and every vendor carries one
+ * visual weight instead of a run of saturated color logos. Anything else —
+ * including a row the catalog could not place — falls back to the shared
+ * generic mark, so no row is ever left without an identity and a missing or
+ * renamed artwork degrades silently rather than breaking the list.
  */
 export function ModelProviderIcon({ catalogProviderKey }: { catalogProviderKey?: string }) {
-  const mark = providerMarkUrl(catalogProviderKey);
-  if (!mark) return <IconBot size={14} className="provider-mark provider-mark-generic" aria-hidden="true" />;
-  return (
-    <span
-      className="provider-mark provider-mark-brand"
-      style={{ maskImage: `url(${mark})`, WebkitMaskImage: `url(${mark})` }}
-      aria-hidden="true"
-    />
-  );
+  const Mark = providerMark(catalogProviderKey);
+  if (!Mark) {
+    return <IconBot size={14} className="provider-mark provider-mark-generic" aria-hidden="true" />;
+  }
+  return <Mark size={14} className="provider-mark provider-mark-brand" />;
 }

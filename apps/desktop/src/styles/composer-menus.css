@@ -535,23 +535,13 @@
   gap: 6px;
 }
 
+/* One provider identity mark, on the group heading and on each of its rows.
+   Both kinds are currentColor paths, so both inherit the surrounding text
+   color: a run of vendors reads as one visual weight in either theme rather
+   than a set of saturated logos, and a vendored mark and the generic fallback
+   sit at the same weight and size. */
 .provider-mark {
   flex: 0 0 auto;
-}
-
-.provider-mark-brand {
-  width: 14px;
-  height: 14px;
-  background-color: var(--ds-text-faint);
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  -webkit-mask-size: contain;
-}
-
-.provider-mark-generic {
   color: var(--ds-text-faint);
 }
 

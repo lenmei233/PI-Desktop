@@ -380,19 +380,38 @@ pair. The provider group heading carries the same mark next to the provider
 name, so a list long enough to scroll past its heading still identifies each
 row's vendor.
 
-The mark is chosen by the row's `catalogProviderKey`, never by its display
-name: the key is resolved once in Main through the same alias mapping that
-already places the row's metadata, so two providers a user renamed to the same
-name keep their own marks and a custom name never borrows a vendor's artwork.
-A key with no vendored mark, including every row the catalog could not place,
-falls back to the shared generic mark, so no row is ever left without an
-identity.
+The mark is chosen by a resolved catalog key, never by a display name: the key
+comes from Main, through the same alias mapping that already places the row's
+metadata, so two providers a user renamed to the same name keep their own marks
+and a custom name never borrows a vendor's artwork.
 
-Marks are bundled with the release and rendered through a CSS mask. Nothing is
-fetched from a logo host at runtime, so the picker looks the same offline, no
-outbound request reveals which providers a user configured, and the monochrome
-artwork keeps one visual weight and follows the theme's text color instead of
-filling the list with saturated color logos. See ADR `provider-brand-marks`.
+A row prefers its own `catalogVendorKey` over the provider's
+`catalogProviderKey`, because one custom endpoint serves several vendors: a group
+of rows shares a provider key while each names its owner. That owner is read off
+the id's vendor route (`openai/gpt-6-astra` names `openai`) across the catalog's
+own candidate index for the id — the same indexed set `findModel` searches — and
+mapped through the existing provider alias table. It names whoever owns the
+weights rather than whichever host published the record the lookup scored
+highest, and it is metadata only: no capability, limit, or wire id changes.
+
+An id that carries no route is resolved from its publisher instead: a vendor that
+publishes under its own key, such as Xiaomi's `mimo-v2.6-pro`, is that vendor
+describing its own model. A reseller never qualifies, because its key
+(`opencode-go`, `nano-gpt`, `requesty`) is not in the vendor set — so a gateway
+whose row merely republishes a model cannot claim its mark. A route always
+beats a publisher key, because the id states its owner more directly than the
+host that listed it.
+
+A row whose id names no vendor by either signal, including an unknown free-form
+id, resolves nothing and falls back.
+
+Marks are bundled with the release as monochrome `currentColor` artwork, compiled
+into inline components by `scripts/build-provider-marks.mjs`. Nothing is fetched
+from a logo host at runtime, so the picker looks the same offline and no outbound
+request reveals which providers a user configured; the marks are paths rather
+than images, so there is no `<img>` element to fail and no CSP surface. Inheriting
+the theme's text color keeps every vendor at one visual weight instead of filling
+the list with saturated color logos. See ADR `provider-brand-marks`.
 
 When the combined Composer menu opens, the renderer starts provider-model
 hydration before the Model submenu is entered. The first visible rows therefore

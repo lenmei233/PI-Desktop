@@ -93,7 +93,9 @@ export function ComposerModelList({
                             onMouseMove={() => setModelHighlight(index)}
                             onClick={() => void selectModel(group.provider, model.modelId)}
                           >
-                            <ModelProviderIcon catalogProviderKey={group.provider.catalogProviderKey} />
+                            <ModelProviderIcon
+                              catalogProviderKey={model.catalogVendorKey ?? group.provider.catalogProviderKey}
+                            />
                             <span className="composer-model-option-main">
                               {/*
                                 One label per row, never both: the name the user

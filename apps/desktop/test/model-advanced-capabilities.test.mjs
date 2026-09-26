@@ -142,22 +142,29 @@ test("a provider row carries the catalog key its brand mark comes from", () => {
 });
 
 test("each composer model row and group heading carries a provider mark", () => {
+  // A row prefers the vendor that owns ITS model over the row's own provider:
+  // one custom endpoint serves several vendors, so a group of rows shares a
+  // provider key while each names its own vendor. The heading has no row to
+  // read, so it stays on the provider's key.
+  assert.match(
+    composerSource,
+    /<ModelProviderIcon\s+catalogProviderKey=\{model\.catalogVendorKey \?\? group\.provider\.catalogProviderKey\}\s*\/>/,
+  );
   assert.match(composerSource, /<ModelProviderIcon catalogProviderKey=\{group\.provider\.catalogProviderKey\} \/>/);
-  // The artwork is a bundled URL, so the element is masked with it rather than
-  // painted: the upstream marks are `currentColor` paths, and a mask keeps
-  // every vendor at one visual weight in both themes.
-  assert.match(iconSource, /maskImage: `url\(\$\{mark\}\)`/);
+  // The marks are inline currentColor paths, not asset URLs, so a vendored
+  // mark and the generic fallback sit at the same weight and inherit the
+  // theme's text color: a run of vendors reads as one visual weight instead of
+  // a set of saturated logos.
+  assert.match(iconSource, /<Mark size=\{14\} className="provider-mark provider-mark-brand" \/>/);
   // Twice: once on the group heading, once per row. The heading names the
   // vendor and the rows repeat it, so a long list stays readable after the
   // heading has scrolled away.
-  assert.equal((composerSource.match(/<ModelProviderIcon /g) ?? []).length, 2);
+  assert.equal((composerSource.match(/<ModelProviderIcon\b/g) ?? []).length, 2);
   assert.match(composerSource, /composer-model-group-label[\s\S]{0,200}?<ModelProviderIcon /);
-  // Marks are monochrome through a mask, so a run of vendors reads as one
-  // visual weight and inherits the theme's text color instead of a set of
-  // saturated logos.
-  assert.match(styles, /\.provider-mark-brand \{/);
-  assert.match(styles, /mask-size: contain;/);
-  assert.match(styles, /\.provider-mark-generic \{/);
+  // One shared size/colour for both kinds, so the fallback never looks like a
+  // different class of thing from a vendored mark.
+  assert.match(styles, /\.provider-mark \{[\s\S]*?color: var\(--ds-text-faint\);/);
+  assert.match(styles, /flex: 0 0 auto;/);
 });
 
 test("capability overrides reach the transport modality arrays", () => {
